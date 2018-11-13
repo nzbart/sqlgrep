@@ -180,7 +180,7 @@ void configure_console_for_ansi_escape_sequences()
     auto const console_window = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD startup_console_mode;
     GetConsoleMode(console_window, &startup_console_mode);
-    SetConsoleMode(console_window, startup_console_mode | 0x0004);
+    SetConsoleMode(console_window, startup_console_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
 int main(int argc, char** argv)
