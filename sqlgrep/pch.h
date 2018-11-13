@@ -9,7 +9,7 @@
 #include <string_view>
 #include "CLI11/CLI11.hpp"
 #include "termcolor/termcolor.hpp"
-#include "soci/include/soci/soci.h"
-#include "soci/include/soci/odbc/soci-odbc.h"
+#include "soci/src/include/soci/soci.h"
+#include "soci/src/include/soci/odbc/soci-odbc.h"
 
 #endif //PCH_H
