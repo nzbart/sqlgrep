@@ -6,13 +6,13 @@ Search through text columns in a database.
 Download the latest version here, no installation required:
 * [Download from Github](https://github.com/nzbart/sqlgrep/releases/download/v0.2/sqlgrep.exe)
 
-Don't trust me? Build it yourself. You will need Visual Studio 2017 installed and a copy of this repository on your local disk. Then run:
+Don't trust me? Build it yourself. You will need [Visual Studio](https://visualstudio.microsoft.com/vs/) with C++ installed. Then run:
 
 ```
-msbuild .\sqlgrep.sln /p:Configuration=Release
+git clone https://github.com/nzbart/sqlgrep.git
+msbuild sqlgrep/sqlgrep.sln /p:Configuration=Release
+sqlgrep/x64/Release/sqlgrep --help
 ```
-
-The executable will be built into `x64/Release`.
 
 ## Usage
 
