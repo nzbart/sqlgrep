@@ -60,7 +60,7 @@ public:
 private:
     logger_impl* do_clone() const override
     {
-        return new database_query_logger;
+        return new database_query_logger;   // `new` is required by SOCI
     }
 };
 
@@ -192,7 +192,7 @@ void find_and_display_matches(string_view to_find, int const maximum_results_per
     connection_parameters parameters(odbc, string(connection_string));
     parameters.set_option(odbc_option_driver_complete, to_string(SQL_DRIVER_NOPROMPT));
     session sql(parameters);
-    sql.set_logger(new database_query_logger);
+    sql.set_logger(new database_query_logger);  // `new` is required by SOCI
     auto all_columns = get_all_string_columns(sql);
     cout << "Searching " << all_columns.size() << " columns for '" << to_find << "'..." << endl;
     uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0, [](int acc, column_details const & b) { return acc + b.number_of_rows; });
