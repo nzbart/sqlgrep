@@ -26,17 +26,17 @@ std::ostream& clear_eol(std::ostream& stream)
     return stream;
 }
 
-void write_colour(string_view const message, std::ostream& colour(std::ostream& stream), std::ostream& background(std::ostream& stream), bool is_bold = false)
+auto write_colour(string_view const message, std::ostream& colour(std::ostream& stream), std::ostream& background(std::ostream& stream), bool is_bold = false)
 {
     cout << clear_eol << colour << background << (is_bold ? termcolor::bold : colour) << message << termcolor::reset << endl;
 }
 
-void write_colour(string_view const message, std::ostream& colour(std::ostream& stream))
+auto write_colour(string_view const message, std::ostream& colour(std::ostream& stream))
 {
     cout << clear_eol << colour << message << termcolor::reset << endl;
 }
 
-void write_verbose(string_view const message)
+auto write_verbose(string_view const message)
 {
     if (verbose_messages_enabled)
     {
@@ -44,7 +44,7 @@ void write_verbose(string_view const message)
     }
 }
 
-void write_error(string_view const message)
+auto write_error(string_view const message)
 {
     cerr << termcolor::red << message << termcolor::reset << endl;
 }
@@ -64,7 +64,7 @@ private:
     }
 };
 
-void write_progress(uint64_t total, uint64_t completed, chrono::duration<uint64_t, std::nano> time_taken_so_far)
+auto write_progress(uint64_t total, uint64_t completed, chrono::duration<uint64_t, std::nano> time_taken_so_far)
 {
     uint64_t const nanoseconds_per_second = 1'000'000'000L;
     uint64_t const seconds_so_far = time_taken_so_far.count() / nanoseconds_per_second;
@@ -77,12 +77,12 @@ void write_progress(uint64_t total, uint64_t completed, chrono::duration<uint64_
     cout << "\r";
 }
 
-string enquote(string_view const val)
+auto enquote(string_view const val)
 {
     return "\""s + string(val) + "\"";
 }
 
-uint64_t get_number_of_rows(session & sql, string_view const schema, string_view const table, string_view const column, unordered_map<string, uint64_t> & cache)
+auto get_number_of_rows(session & sql, string_view const schema, string_view const table, string_view const column, unordered_map<string, uint64_t> & cache)
 {
     uint64_t count;
     stringstream query;
@@ -100,7 +100,7 @@ uint64_t get_number_of_rows(session & sql, string_view const schema, string_view
     return count;
 }
 
-vector<column_details> get_all_string_columns(session & sql)
+auto get_all_string_columns(session & sql)
 {
     cout << "Scanning for string columns..." << endl;
 
@@ -128,7 +128,7 @@ vector<column_details> get_all_string_columns(session & sql)
     return details;
 }
 
-string escape_search_text(string_view to_find)
+auto escape_search_text(string_view to_find)
 {
     regex const r("([\\\\%_[])");
     string result;
@@ -136,7 +136,7 @@ string escape_search_text(string_view to_find)
     return result;
 }
 
-vector<string> find_matches(session & sql, string_view const schema, string_view const table, string_view const column, string_view const to_find, int const maximum_results_per_column)
+auto find_matches(session & sql, string_view const schema, string_view const table, string_view const column, string_view const to_find, int const maximum_results_per_column)
 {
     int const max_string = 500;
     vector<string> matches(maximum_results_per_column + 1);
@@ -151,7 +151,7 @@ vector<string> find_matches(session & sql, string_view const schema, string_view
     return matches;
 }
 
-void display_all_matches(session & sql, vector<column_details> const & all_columns, string_view to_find, int const maximum_results_per_column, uint64_t total_rows)
+auto display_all_matches(session & sql, vector<column_details> const & all_columns, string_view to_find, int const maximum_results_per_column, uint64_t total_rows)
 {
     uint64_t completed_rows = 0;
     auto const start_time = chrono::steady_clock::now();
@@ -187,7 +187,7 @@ void display_all_matches(session & sql, vector<column_details> const & all_colum
     }
 }
 
-void find_and_display_matches(string_view to_find, int const maximum_results_per_column, string_view const connection_string)
+auto find_and_display_matches(string_view to_find, int const maximum_results_per_column, string_view const connection_string)
 {
     connection_parameters parameters(odbc, string(connection_string));
     parameters.set_option(odbc_option_driver_complete, to_string(SQL_DRIVER_NOPROMPT));
@@ -200,7 +200,7 @@ void find_and_display_matches(string_view to_find, int const maximum_results_per
     display_all_matches(sql, all_columns, to_find, maximum_results_per_column, total_rows);
 }
 
-void configure_console_for_ansi_escape_sequences()
+auto configure_console_for_ansi_escape_sequences()
 {
     auto const console_window = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD startup_console_mode;
