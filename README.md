@@ -8,7 +8,7 @@ Download the latest version here, no installation required:
 
 Don't trust random executables from the internet? Build it yourself. You will need [Visual Studio](https://visualstudio.microsoft.com/vs/) with C++ installed. Then run:
 
-```
+```powershell
 git clone https://github.com/nzbart/sqlgrep.git
 msbuild sqlgrep/sqlgrep.sln /p:Configuration=Release
 sqlgrep/x64/Release/sqlgrep --help
@@ -16,7 +16,7 @@ sqlgrep/x64/Release/sqlgrep --help
 
 ## Usage
 
-```
+```powershell
 # see all options
 ./sqlgrep --help                                    
 
