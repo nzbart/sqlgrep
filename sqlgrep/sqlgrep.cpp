@@ -46,7 +46,7 @@ void write_verbose(string_view const message)
 
 void write_error(string_view const message)
 {
-    write_colour(message, termcolor::red);
+    cerr << termcolor::red << message << termcolor::reset << endl;
 }
 
 void write_progress(uint64_t total, uint64_t completed, chrono::duration<uint64_t, std::nano> time_taken_so_far)
