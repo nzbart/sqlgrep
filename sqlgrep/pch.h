@@ -8,6 +8,9 @@
 #include <string>
 #include <string_view>
 #include <optional>
+#include <cstdlib>
+#include <Windows.h>
+#include <sqlext.h>
 #include "CLI11/CLI11.hpp"
 #include "termcolor/termcolor.hpp"
 #include "soci/src/include/soci/soci.h"

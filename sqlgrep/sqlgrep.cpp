@@ -208,6 +208,76 @@ void configure_console_for_ansi_escape_sequences()
     SetConsoleMode(console_window, startup_console_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 }
 
+auto get_all_odbc_drivers()
+{
+    SQLHANDLE environment_handle;
+    auto ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &environment_handle);
+    if (is_odbc_error(ret))
+        throw runtime_error("Unable to get environment handle.");
+
+    ret = SQLSetEnvAttr(environment_handle, SQL_ATTR_ODBC_VERSION, reinterpret_cast<void*>(SQL_OV_ODBC3), 0);
+    if (is_odbc_error(ret))
+        throw runtime_error("Unable to configure environment to ODBC version 3.");
+
+    vector<string> drivers;
+    int const buffer_size = 2000;
+    unsigned char description[buffer_size];
+    unsigned char driver_attributes[buffer_size];
+    while (true) {
+        short actual_description_length;
+        short actual_driver_attributes_length;
+        ret = SQLDriversA(
+            environment_handle,
+            SQL_FETCH_NEXT,
+            description,
+            buffer_size,
+            &actual_description_length,
+            driver_attributes,
+            buffer_size,
+            &actual_driver_attributes_length);
+        switch(ret)
+        {
+        case SQL_SUCCESS:
+            drivers.emplace_back(string(reinterpret_cast<char*>(description), actual_description_length));
+            break;
+        case SQL_SUCCESS_WITH_INFO:
+            throw runtime_error("The buffer was not long enough for the driver description or attributes.");
+        case SQL_NO_DATA:
+            return drivers;
+        case SQL_ERROR:
+            throw soci_error("Unable to enumerate ODBC drivers");
+        default:
+            throw runtime_error("Unexpected result code from SQLDrivers: "s + to_string(ret) + ".");
+        }
+    }
+}
+
+auto get_newest_matching_driver(vector<string> const & all_drivers, regex const & driver_regex)
+{
+    smatch match;
+    optional<pair<string, int>> found_driver;
+    for (auto& driver : all_drivers)
+    {
+        if (regex_match(driver, match, driver_regex))
+        {
+            auto const driver_version = atoi(match[1].str().c_str());
+            if(!found_driver.has_value() || found_driver.value().second < driver_version)
+            {
+                found_driver = make_pair(driver, driver_version);
+            }
+        }
+    }
+    return found_driver.has_value() ? make_optional(found_driver.value().first) : optional<string>();
+}
+
+auto get_best_sql_server_odbc_driver_name()
+{
+    auto const all_drivers = get_all_odbc_drivers();
+    auto modern_odbc_driver_name = get_newest_matching_driver(all_drivers, regex(R"regex(^ODBC Driver (\d+(?:\.\d+|)) for SQL Server$)regex"));
+    auto native_driver_name = get_newest_matching_driver(all_drivers, regex(R"regex(^SQL Server Native Client (\d+(?:\.\d+|))$)regex"));
+    return modern_odbc_driver_name.value_or(native_driver_name.value_or("SQL Server"));
+}
+
 int main(int argc, char** argv)
 {
     configure_console_for_ansi_escape_sequences();
@@ -232,7 +302,7 @@ int main(int argc, char** argv)
     auto password_option = app.add_option("-p,--password", password, "The password of the user to connect as");
     user_name_option->needs(password_option);
     password_option->needs(user_name_option);
-    string driver = "ODBC Driver 11 for SQL Server";
+    string driver = get_best_sql_server_odbc_driver_name();
     app.add_option("-d,--driver", driver, "The ODBC database driver to use", true);
 
     try
