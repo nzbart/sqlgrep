@@ -49,6 +49,21 @@ void write_error(string_view const message)
     cerr << termcolor::red << message << termcolor::reset << endl;
 }
 
+class database_query_logger : public logger_impl
+{
+public:
+    void start_query(std::string const & query) override
+    {
+        write_verbose("Query: "s + query);
+    }
+
+private:
+    logger_impl* do_clone() const override
+    {
+        return new database_query_logger;
+    }
+};
+
 void write_progress(uint64_t total, uint64_t completed, chrono::duration<uint64_t, std::nano> time_taken_so_far)
 {
     uint64_t const nanoseconds_per_second = 1'000'000'000L;
@@ -126,7 +141,6 @@ vector<string> find_matches(session & sql, string_view const schema, string_view
     vector<string> matches(maximum_results_per_column + 1);
     stringstream query;
     query << "select cast(left(" << enquote(column) << ", " << (max_string + 1) << ") as varchar(" << (max_string + 1) << ")) from " << enquote(schema) << "." << enquote(table) << " where " << enquote(column) << " like '%" + escape_search_text(to_find) + "%' escape '\\'", into(matches);
-    write_verbose("Executing: " + query.str());
     sql << query.str(), into(matches);
     for (vector<string>::size_type i = 0; i != matches.size(); ++i)
     {
@@ -175,6 +189,7 @@ void find_and_display_matches(string_view to_find, int const maximum_results_per
     connection_parameters parameters(odbc, string(connection_string));
     parameters.set_option(odbc_option_driver_complete, to_string(SQL_DRIVER_NOPROMPT));
     session sql(parameters);
+    sql.set_logger(new database_query_logger);
     auto all_columns = get_all_string_columns(sql);
     cout << "Searching " << all_columns.size() << " columns for '" << to_find << "'..." << endl;
     uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0, [](int acc, column_details const & b) { return acc + b.number_of_rows; });
