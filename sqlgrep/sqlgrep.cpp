@@ -64,7 +64,7 @@ void write_progress(uint64_t total, uint64_t completed, chrono::duration<uint64_
 
 string enquote(string_view const val)
 {
-    return string("\"") + string(val) + "\"";
+    return "\""s + string(val) + "\"";
 }
 
 uint64_t get_number_of_rows(session & sql, string_view const schema, string_view const table, string_view const column, unordered_map<string, uint64_t> & cache)
@@ -237,12 +237,12 @@ int main(int argc, char** argv)
     }
     catch (soci_error& e)
     {
-        write_error(string("DB error: ") + e.what());
+        write_error("DB error: "s + e.what());
         return 1;
     }
     catch (exception& e)
     {
-        write_error(string("Generic error: ") + e.what());
+        write_error("Generic error: "s + e.what());
         return 1;
     }
     catch (...)
