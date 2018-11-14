@@ -17,6 +17,7 @@ sqlgrep/x64/Release/sqlgrep --help
 ## Usage
 
 ```
-./sqlgrep --help                    # see all options
-./sqlgrep haystack_database needle  # search for needle in haystack database
+./sqlgrep --help                                    # see all options
+./sqlgrep haystack_database needle                  # search for needle in haystack database using trusted authentication
+./sqlgrep haystack_database needle -u user -p pass  # search for needle in haystack database using username and password
 ```

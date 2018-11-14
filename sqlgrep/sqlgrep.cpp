@@ -172,7 +172,9 @@ void display_all_matches(session & sql, vector<column_details> const & all_colum
 
 void find_and_display_matches(string_view to_find, int const maximum_results_per_column, string_view const connection_string)
 {
-    session sql(odbc, string(connection_string));
+    connection_parameters parameters(odbc, string(connection_string));
+    parameters.set_option(odbc_option_driver_complete, to_string(SQL_DRIVER_NOPROMPT));
+    session sql(parameters);
     auto all_columns = get_all_string_columns(sql);
     cout << "Searching " << all_columns.size() << " columns for '" << to_find << "'..." << endl;
     uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0, [](int acc, column_details const & b) { return acc + b.number_of_rows; });
@@ -234,6 +236,18 @@ int main(int argc, char** argv)
         find_and_display_matches(search_string, maximum_results_per_column, connection_string);
         cout << clear_eol << endl;
         return 0;
+    }
+    catch (odbc_soci_error & e)
+    {
+        if(string(reinterpret_cast<char const*>(e.odbc_error_code())) == "28000" && e.native_error_code() == 18456)
+        {
+            write_error("The login credentials may be incorrect.");
+        }
+        else
+        {
+            write_error("DB error: "s + e.what());
+        }
+        return 1;
     }
     catch (soci_error& e)
     {
