@@ -17,9 +17,17 @@ sqlgrep/x64/Release/sqlgrep --help
 ## Usage
 
 ```
-./sqlgrep --help                                    # see all options
-./sqlgrep haystack_database needle                  # search for needle in haystack database using trusted authentication
-./sqlgrep haystack_database needle -u user -p pass  # search for needle in haystack database using username and password
+# see all options
+./sqlgrep --help                                    
+
+# search for needle in haystack database on localhost using trusted authentication
+./sqlgrep haystack_database needle                  
+
+# search for needle in haystack database on the specified server using trusted authentication
+./sqlgrep haystack_database needle -s server        
+
+# search for needle in haystack database on localhost using username and password
+./sqlgrep haystack_database needle -u user -p pass  
 ```
 
 ## Features and limitations
