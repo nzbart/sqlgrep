@@ -4,7 +4,7 @@ Search through text columns in a database.
 ## Download
 
 Download the latest version here, no installation required:
-* [Download from Github](https://github.com/nzbart/sqlgrep/releases/latest)
+* [Download from Github](https://github.com/nzbart/sqlgrep/releases/download/v0.4/sqlgrep.exe)
 
 Don't trust random executables from the internet? Build it yourself. You will need [Visual Studio](https://visualstudio.microsoft.com/vs/) with C++ installed. Then run:
 
