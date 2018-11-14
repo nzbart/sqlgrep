@@ -205,6 +205,12 @@ int main(int argc, char** argv)
     app.add_option("-m,--max-results", maximum_results_per_column, "Maxmium number of matches to return per column", true);
     string server = "localhost";
     app.add_option("-s,--server", server, "The SQL server that has the database to search", true);
+    optional<string> username;
+    auto user_name_option = app.add_option("-u,--user-name", username, "The name of the user to connect as");
+    optional<string> password;
+    auto password_option = app.add_option("-p,--password", password, "The password of the user to connect as");
+    user_name_option->needs(password_option);
+    password_option->needs(user_name_option);
     string driver = "ODBC Driver 11 for SQL Server";
     app.add_option("-d,--driver", driver, "The ODBC database driver to use", true);
 
@@ -217,7 +223,10 @@ int main(int argc, char** argv)
         return app.exit(e);
     }
 
-    string const connection_string = "Driver={" + driver + "};Server=" + server + ";Database=" + database + ";Trusted_Connection=Yes";
+    auto const credential = password.has_value()
+        ? "Uid=" + username.value() + ";Pwd=" + password.value()
+        : "Trusted_Connection=Yes";
+    auto const connection_string = "Driver={" + driver + "};Server=" + server + ";Database=" + database + ";" + credential;
     verbose_messages_enabled = verbose;
 
     try

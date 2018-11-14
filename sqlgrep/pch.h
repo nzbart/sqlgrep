@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <optional>
 #include "CLI11/CLI11.hpp"
 #include "termcolor/termcolor.hpp"
 #include "soci/src/include/soci/soci.h"
