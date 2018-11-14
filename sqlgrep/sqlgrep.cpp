@@ -239,14 +239,21 @@ int main(int argc, char** argv)
     }
     catch (odbc_soci_error & e)
     {
-        if(string(reinterpret_cast<char const*>(e.odbc_error_code())) == "28000" && e.native_error_code() == 18456)
+        if(string(reinterpret_cast<char const*>(e.odbc_error_code())) == "28000")
         {
-            write_error("The login credentials may be incorrect.");
+            if (e.native_error_code() == 18452)
+            {
+                write_error("You attempted to connect with a trusted connection, but the current user is not trusted. Try a username and password.");
+                return 2;
+            }
+            if(e.native_error_code() == 18456)
+            {
+                write_error("The login credentials may be incorrect.");
+                return 2;
+            }
         }
-        else
-        {
-            write_error("DB error: "s + e.what());
-        }
+
+        write_error("DB error: "s + e.what());
         return 1;
     }
     catch (soci_error& e)
@@ -262,6 +269,6 @@ int main(int argc, char** argv)
     catch (...)
     {
         write_error("Something went wrong.");
-        return 2;
+        return 3;
     }
 }
