@@ -84,7 +84,7 @@ string enquote(string_view const val)
 
 uint64_t get_number_of_rows(session & sql, string_view const schema, string_view const table, string_view const column, unordered_map<string, uint64_t> & cache)
 {
-    int count;
+    uint64_t count;
     stringstream query;
     query << "select count(*) from " << enquote(schema) << "." << enquote(table);
     auto const query_str = query.str();
