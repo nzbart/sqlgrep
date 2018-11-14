@@ -38,5 +38,6 @@ These limitations are currently in place, but it would be great if they could be
 * Only compiles on Windows.
 * Only supports a basic substring search.
 * Does not output results in an easily machine parseable format, such as XML or JSON.
+* Doesn't detect which version(s) of SQL Server ODBC driver are installed.
 
 There are no plans to make a GUI, since there are already some nice GUI tools available with search features, such as [HeidiSQL](https://www.heidisql.com/).
