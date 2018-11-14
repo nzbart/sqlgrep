@@ -192,6 +192,9 @@ int main(int argc, char** argv)
     configure_console_for_ansi_escape_sequences();
 
     CLI::App app{ "sqlgrep" };
+    shared_ptr<CLI::Formatter> formatter{ new CLI::Formatter() };
+    formatter->column_width(50);
+    app.formatter(formatter);
     string database;
     app.add_option("database", database, "The database to search")->mandatory();
     string search_string;
