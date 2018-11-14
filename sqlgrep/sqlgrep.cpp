@@ -122,6 +122,7 @@ vector<column_details> get_all_string_columns(session & sql)
     for (auto& column : details)
     {
         column.number_of_rows = get_number_of_rows(sql, column.schema, column.table, column.column, cache);
+        write_verbose("Number of rows in "s + column.schema + "." + column.table + "." + column.column + ": " + to_string(column.number_of_rows) + ".");
     }
 
     return details;
@@ -177,7 +178,9 @@ void display_all_matches(session & sql, vector<column_details> const & all_colum
 
         completed_rows += column.number_of_rows;
         auto const now = chrono::steady_clock::now();
-        if (!matches.empty() || (now - last_displayed).count() / 1'000'000'000 > 2) {
+        auto const nanoseconds_per_second = 1'000'000'000;
+        write_verbose("Completed "s + to_string(completed_rows) + " rows in " + to_string((now - start_time).count() / nanoseconds_per_second) + " seconds.");
+        if (!matches.empty() || (now - last_displayed).count() / nanoseconds_per_second > 2) {
             write_progress(total_rows, completed_rows, now - start_time);
             last_displayed = now;
         }
@@ -193,6 +196,7 @@ void find_and_display_matches(string_view to_find, int const maximum_results_per
     auto all_columns = get_all_string_columns(sql);
     cout << "Searching " << all_columns.size() << " columns for '" << to_find << "'..." << endl;
     uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0, [](int acc, column_details const & b) { return acc + b.number_of_rows; });
+    write_verbose("Total number of rows to search: "s + to_string(total_rows) + ".");
     display_all_matches(sql, all_columns, to_find, maximum_results_per_column, total_rows);
 }
 
