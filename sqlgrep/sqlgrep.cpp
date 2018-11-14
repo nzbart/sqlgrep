@@ -140,6 +140,7 @@ void display_all_matches(session & sql, vector<column_details> const & all_colum
 {
     uint64_t completed_rows = 0;
     auto const start_time = chrono::steady_clock::now();
+    auto last_displayed = start_time;
     for (auto column : all_columns)
     {
         auto matches = find_matches(sql, column.schema, column.table, column.column, to_find, maximum_results_per_column);
@@ -162,7 +163,10 @@ void display_all_matches(session & sql, vector<column_details> const & all_colum
 
         completed_rows += column.number_of_rows;
         auto const now = chrono::steady_clock::now();
-        write_progress(total_rows, completed_rows, now - start_time);
+        if (!matches.empty() || (now - last_displayed).count() / 1'000'000'000 > 2) {
+            write_progress(total_rows, completed_rows, now - start_time);
+            last_displayed = now;
+        }
     }
 }
 
