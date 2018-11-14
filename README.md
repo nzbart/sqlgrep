@@ -21,3 +21,14 @@ sqlgrep/x64/Release/sqlgrep --help
 ./sqlgrep haystack_database needle                  # search for needle in haystack database using trusted authentication
 ./sqlgrep haystack_database needle -u user -p pass  # search for needle in haystack database using username and password
 ```
+
+## Features and limitations
+
+These limitations are currently in place, but it would be great if they could be removed:
+
+* Only tested against SQL Server.
+* Only compiles on Windows.
+* Only supports a basic substring search.
+* Does not output results in an easily machine parseable format, such as XML or JSON.
+
+There are no plans to make a GUI, since there are already some nice GUI tools available with search features, such as [HeidiSQL](https://www.heidisql.com/).
