@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>sqlgrep</id>
+    <version>0.4</version>
+    <packageSourceUrl>https://github.com/nzbart/sqlgrep</packageSourceUrl>
+    <owners>bart</owners>
+    <title>sqlgrep</title>
+    <authors>Bart Joy</authors>
+    <projectUrl>https://github.com/nzbart/sqlgrep</projectUrl>
+    <!-- If there is a license Url available, it is required for the community feed -->
+    <licenseUrl>https://github.com/nzbart/sqlgrep/blob/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/nzbart/sqlgrep</projectSourceUrl>
+    <bugTrackerUrl>https://github.com/nzbart/sqlgrep/issues</bugTrackerUrl>
+    <tags>sqlgrep sql server</tags>
+    <summary>Search through text columns in a database.</summary>
+    <description>Search through text columns in all tables in a SQL Server database for a particular substring.</description>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
