@@ -4,7 +4,7 @@
   <metadata>
     <id>sqlgrep</id>
     <version></version>
-    <packageSourceUrl>https://github.com/nzbart/sqlgrep</packageSourceUrl>
+    <packageSourceUrl>https://github.com/nzbart/sqlgrep/tree/master/ChocolateyPackage</packageSourceUrl>
     <owners>bart</owners>
     <title>sqlgrep</title>
     <authors>Bart Joy</authors>
