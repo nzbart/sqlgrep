@@ -12,7 +12,7 @@
     <!-- If there is a license Url available, it is required for the community feed -->
     <licenseUrl>https://github.com/nzbart/sqlgrep/blob/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <projectSourceUrl>https://github.com/nzbart/sqlgrep</projectSourceUrl>
+    <projectSourceUrl>https://github.com/nzbart/sqlgrep/tree/master/ChocolateyPackage</projectSourceUrl>
     <bugTrackerUrl>https://github.com/nzbart/sqlgrep/issues</bugTrackerUrl>
     <tags>sqlgrep sql server</tags>
     <summary>Search through text columns in a database.</summary>
