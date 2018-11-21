@@ -15,7 +15,7 @@
     <bugTrackerUrl>https://github.com/nzbart/sqlgrep/issues</bugTrackerUrl>
     <tags>sqlgrep sql server</tags>
     <summary>Search through text columns in a database.</summary>
-    <description>Search through text columns in all tables in a SQL Server database for a particular substring.</description>
+    <description>Search through text columns in all tables in a SQL Server database for a particular substring. Command-line only.</description>
     <releaseNotes>https://github.com/nzbart/sqlgrep/releases</releaseNotes>
   </metadata>
   <files>
