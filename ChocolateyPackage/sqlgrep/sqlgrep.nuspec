@@ -3,7 +3,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>sqlgrep</id>
-    <version>0.4</version>
+    <version></version>
     <packageSourceUrl>https://github.com/nzbart/sqlgrep</packageSourceUrl>
     <owners>bart</owners>
     <title>sqlgrep</title>
