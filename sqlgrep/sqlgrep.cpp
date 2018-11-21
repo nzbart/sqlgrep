@@ -20,33 +20,24 @@ struct match_details
 
 bool verbose_messages_enabled = false;
 
-std::ostream& clear_eol(std::ostream& stream)
-{
-    stream << "\033[0K";
-    return stream;
-}
+string const clear_eol = "\033[0K"s;
 
-auto write_colour(string_view const message, std::ostream& colour(std::ostream& stream), std::ostream& background(std::ostream& stream), bool is_bold = false)
+auto write_colour(string_view const message, fmt::color colour)
 {
-    cout << clear_eol << colour << background << (is_bold ? termcolor::bold : colour) << message << termcolor::reset << endl;
-}
-
-auto write_colour(string_view const message, std::ostream& colour(std::ostream& stream))
-{
-    cout << clear_eol << colour << message << termcolor::reset << endl;
+    fmt::print(colour, "{}{}\n", clear_eol, message);
 }
 
 auto write_verbose(string_view const message)
 {
     if (verbose_messages_enabled)
     {
-        write_colour(message, termcolor::green);
+        write_colour(message, fmt::color::green);
     }
 }
 
 auto write_error(string_view const message)
 {
-    cerr << termcolor::red << message << termcolor::reset << endl;
+    fmt::print(fmt::color::red, "{}\n", message);
 }
 
 class database_query_logger : public logger_impl
@@ -71,10 +62,10 @@ auto write_progress(uint64_t total, uint64_t completed, chrono::duration<uint64_
     uint64_t const estimated_total_seconds = seconds_so_far * total / completed;
     uint64_t const remaining_seconds = estimated_total_seconds - seconds_so_far;
     auto const percent_complete = completed * 100 / total;
-    cout << clear_eol << percent_complete << "% complete";
+    fmt::print("{}{}% complete", clear_eol, percent_complete);
     if (percent_complete > 10)
-        cout << " (" << remaining_seconds << " seconds remaining)...";
-    cout << "\r";
+        fmt::print(" ({} seconds remaining)...", remaining_seconds);
+    fmt::print("\r");
 }
 
 auto enquote(string_view const val)
@@ -102,7 +93,7 @@ auto get_number_of_rows(session & sql, string_view const schema, string_view con
 
 auto get_all_string_columns(session & sql)
 {
-    cout << "Scanning for string columns..." << endl;
+    fmt::print("Scanning for string columns...\n");
 
     rowset<row> data = sql.prepare <<
         "select TABLE_SCHEMA SchemaName, TABLE_NAME TableName, COLUMN_NAME ColumnName "
@@ -166,14 +157,14 @@ auto display_all_matches(session & sql, vector<column_details> const & all_colum
                 matches.resize(maximum_results_per_column);
             match_details match{ column, more_available, matches };
 
-            write_colour(match.column.table + "." + match.column.column, termcolor::red, termcolor::on_white, true);
+            write_colour(match.column.table + "." + match.column.column, fmt::color::magenta);
             for (auto const & value : match.matches)
             {
-                cout << "    " << value << endl;
+                fmt::print("    {}\n", value);
             }
 
             if (match.more_matches_available)
-                write_colour("    ... more available", termcolor::green);
+                write_colour("    ... more available", fmt::color::green);
         }
 
         completed_rows += column.number_of_rows;
@@ -194,7 +185,7 @@ auto find_and_display_matches(string_view to_find, int const maximum_results_per
     session sql(parameters);
     sql.set_logger(new database_query_logger);  // `new` is required by SOCI
     auto all_columns = get_all_string_columns(sql);
-    cout << "Searching " << all_columns.size() << " columns for '" << to_find << "'..." << endl;
+    cout << "Searching " << all_columns.size() << " columns for '" << to_find << "'...\n";
     uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0, [](int acc, column_details const & b) { return acc + b.number_of_rows; });
     write_verbose("Total number of rows to search: "s + to_string(total_rows) + ".");
     display_all_matches(sql, all_columns, to_find, maximum_results_per_column, total_rows);
@@ -323,7 +314,7 @@ int main(int argc, char** argv)
     try
     {
         find_and_display_matches(search_string, maximum_results_per_column, connection_string);
-        cout << clear_eol << endl;
+        cout << clear_eol << "\n";
         return 0;
     }
     catch (odbc_soci_error & e)
