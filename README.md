@@ -3,7 +3,7 @@ Search through text columns in a database.
 
 ## Installation
 
-Install via Chocolatey:
+Install via [Chocolatey](https://chocolatey.org/):
 
 ```powershell
 choco install sqlgrep
