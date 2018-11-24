@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
+
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(cotire)
+
 project(sqlgrep)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,3 +20,6 @@ set(SOCI_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/soci/linuxbuild/lib
 find_library(SOCI_CORE_LIBRARY NAMES libsoci_core.a PATHS ${SOCI_LIBRARY_DIR})
 find_library(SOCI_ODBC_LIBRARY NAMES libsoci_odbc.a PATHS ${SOCI_LIBRARY_DIR})
 target_link_libraries(sqlgrep ${SOCI_CORE_LIBRARY} ${SOCI_ODBC_LIBRARY} odbc dl)
+
+set_target_properties(sqlgrep PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "sqlgrep/pch.h")
+cotire(sqlgrep)
