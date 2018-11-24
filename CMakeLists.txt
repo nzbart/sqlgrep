@@ -3,8 +3,10 @@ project(sqlgrep)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-#link_directories("${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/soci/linuxbuild/lib")
-add_executable(sqlgrep sqlgrep/sqlgrep.cpp ThirdParty/fmt_source/format.cc)
+add_executable(sqlgrep
+    sqlgrep/sqlgrep.cpp
+    sqlgrep/linux_specific.cpp
+    ThirdParty/fmt_source/format.cc)
 include_directories(ThirdParty)
 
 # SOCI
