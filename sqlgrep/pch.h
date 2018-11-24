@@ -8,6 +8,11 @@
 #include <string_view>
 #include <optional>
 #include <cstdlib>
+
+#ifdef _WIN64
+#include <Windows.h>
+#endif
+
 #include <sqlext.h>
 #include "CLI11/CLI11.hpp"
 #include "fmt/format.h"
