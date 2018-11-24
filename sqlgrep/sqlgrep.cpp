@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "sqlgrep.h"
 
 using namespace std;
 using namespace soci;
@@ -191,14 +192,6 @@ auto find_and_display_matches(string_view to_find, int const maximum_results_per
     display_all_matches(sql, all_columns, to_find, maximum_results_per_column, total_rows);
 }
 
-//auto configure_console_for_ansi_escape_sequences()
-//{
-    //auto const console_window = GetStdHandle(STD_OUTPUT_HANDLE);
-    //DWORD startup_console_mode;
-    //GetConsoleMode(console_window, &startup_console_mode);
-    //SetConsoleMode(console_window, startup_console_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-//}
-
 auto get_all_odbc_drivers()
 {
     SQLHANDLE environment_handle;
@@ -266,12 +259,18 @@ auto get_best_sql_server_odbc_driver_name()
     auto const all_drivers = get_all_odbc_drivers();
     auto modern_odbc_driver_name = get_newest_matching_driver(all_drivers, regex(R"regex(^ODBC Driver (\d+(?:\.\d+|)) for SQL Server$)regex"));
     auto native_driver_name = get_newest_matching_driver(all_drivers, regex(R"regex(^SQL Server Native Client (\d+(?:\.\d+|))$)regex"));
+    auto sql_server_driver_name = get_newest_matching_driver(all_drivers, regex(R"regex(^SQL Server$)regex"));
+
+    if(!modern_odbc_driver_name.has_value() && !native_driver_name.has_value() && !sql_server_driver_name.has_value()) {
+        on_driver_not_found();
+    }
+
     return modern_odbc_driver_name.value_or(native_driver_name.value_or("SQL Server"));
 }
 
 int main(int argc, char** argv)
 {
-    //configure_console_for_ansi_escape_sequences();
+    set_up_console();
 
     CLI::App app{ "sqlgrep" };
     shared_ptr<CLI::Formatter> formatter{ new CLI::Formatter() };
