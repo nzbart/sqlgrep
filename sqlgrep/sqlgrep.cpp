@@ -191,13 +191,13 @@ auto find_and_display_matches(string_view to_find, int const maximum_results_per
     display_all_matches(sql, all_columns, to_find, maximum_results_per_column, total_rows);
 }
 
-auto configure_console_for_ansi_escape_sequences()
-{
-    auto const console_window = GetStdHandle(STD_OUTPUT_HANDLE);
-    DWORD startup_console_mode;
-    GetConsoleMode(console_window, &startup_console_mode);
-    SetConsoleMode(console_window, startup_console_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-}
+//auto configure_console_for_ansi_escape_sequences()
+//{
+    //auto const console_window = GetStdHandle(STD_OUTPUT_HANDLE);
+    //DWORD startup_console_mode;
+    //GetConsoleMode(console_window, &startup_console_mode);
+    //SetConsoleMode(console_window, startup_console_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+//}
 
 auto get_all_odbc_drivers()
 {
@@ -271,7 +271,7 @@ auto get_best_sql_server_odbc_driver_name()
 
 int main(int argc, char** argv)
 {
-    configure_console_for_ansi_escape_sequences();
+    //configure_console_for_ansi_escape_sequences();
 
     CLI::App app{ "sqlgrep" };
     shared_ptr<CLI::Formatter> formatter{ new CLI::Formatter() };
