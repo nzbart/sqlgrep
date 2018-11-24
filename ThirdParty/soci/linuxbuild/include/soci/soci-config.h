@@ -24,9 +24,6 @@
 // DB2 backend
 /* #undef SOCI_HAVE_DB2 */
 
-// EMPTY backend
-#define SOCI_HAVE_EMPTY
-
 // FIREBIRD backend
 /* #undef SOCI_HAVE_FIREBIRD */
 
