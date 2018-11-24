@@ -9,7 +9,7 @@ Install via Chocolatey:
 choco install sqlgrep
 ```
 
-For other options, see the [Download](#Download) section.
+For other options, including for Linux, see the [Download](#Download) section.
 
 ## Usage
 
@@ -32,7 +32,6 @@ For other options, see the [Download](#Download) section.
 These limitations are currently in place, but it would be great if they could be removed:
 
 * Only tested against SQL Server.
-* Only compiles on Windows.
 * Only supports a basic substring search.
 * Does not output results in an easily machine parseable format, such as XML or JSON.
 
@@ -40,14 +39,30 @@ There are no plans to make a GUI, since there are already some nice GUI tools av
 
 ## Download
 
-Download the latest version here, no installation required:
+Download the latest Windows version here, no installation required:
 * [Download from Github](https://github.com/nzbart/sqlgrep/releases/download/v0.4/sqlgrep.exe)
 
-Don't trust random executables from the internet? Build it yourself. You will need [Visual Studio](https://visualstudio.microsoft.com/vs/) with C++ installed. Then run:
+Don't trust random executables from the internet? Build it yourself.
+
+### Building on Windows
+You will need [Visual Studio](https://visualstudio.microsoft.com/vs/) with C++ installed. Then run:
 
 ```powershell
 git clone https://github.com/nzbart/sqlgrep.git
 msbuild sqlgrep/sqlgrep.sln /p:Configuration=Release
 sqlgrep/x64/Release/sqlgrep --help
+```
+
+### Building on Linux
+The instructions below work for Debian 9, but can be adapted for other variants:
+```sh
+sudo apt install unixodbc-dev
+git clone https://github.com/nzbart/sqlgrep.git
+git -C sqlgrep checkout linux
+mkdir sqlgrep_bin
+cd sqlgrep_bin
+cmake ../sqlgrep
+cmake --build . --config MinSizeRel
+./sqlgrep --help
 ```
 
