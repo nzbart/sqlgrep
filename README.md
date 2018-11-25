@@ -58,11 +58,7 @@ The instructions below work for Debian 9, but can be adapted for other variants:
 ```sh
 sudo apt install unixodbc-dev
 git clone https://github.com/nzbart/sqlgrep.git
-git -C sqlgrep checkout linux
-mkdir sqlgrep_bin
-cd sqlgrep_bin
-cmake ../sqlgrep
-cmake --build . --config MinSizeRel
-./sqlgrep --help
+cd sqlgrep
+./LinuxBuild.sh
 ```
 
