@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/nzbart/sqlgrep.svg?branch=master)](https://travis-ci.org/nzbart/sqlgrep)
-![Chocolatey](https://img.shields.io/chocolatey/v/sqlgrep.svg)
-![GitHub release](https://img.shields.io/github/release/nzbart/sqlgrep.svg)
-![GitHub commits (since latest release)](https://img.shields.io/github/commits-since/nzbart/sqlgrep/latest.svg)
+[![Chocolatey](https://img.shields.io/chocolatey/v/sqlgrep.svg)](https://chocolatey.org/packages/sqlgrep)
+[![GitHub release](https://img.shields.io/github/release/nzbart/sqlgrep.svg)](https://github.com/nzbart/sqlgrep/releases)
+[![GitHub commits (since latest release)](https://img.shields.io/github/commits-since/nzbart/sqlgrep/latest.svg)](https://github.com/nzbart/sqlgrep/commits/master)
 
 # sqlgrep
 Search through text columns in a database.
