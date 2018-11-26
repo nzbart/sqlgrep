@@ -316,7 +316,7 @@ int main(int argc, char** argv)
     auto const credential = password.has_value()
         ? "Uid=" + username.value() + ";Pwd=" + password.value()
         : "Trusted_Connection=Yes";
-    auto const connection_string = "Driver={" + driver + "};Server=" + server + ";Database=" + database + ";" + credential;
+    auto const connection_string = "Driver={" + driver + "};Server=" + server + ";Database=" + database + ";App=sqlgrep;" + credential;
     verbose_messages_enabled = verbose;
 
     try
