@@ -45,7 +45,7 @@ There are no plans to make a GUI, since there are already some nice GUI tools av
 ## Download
 
 Download the latest Windows version here, no installation required:
-* [Download from Github](https://github.com/nzbart/sqlgrep/releases/download/v0.4/sqlgrep.exe)
+* [Download from Github](https://github.com/nzbart/sqlgrep/releases/download/v0.5/sqlgrep.exe)
 
 Don't trust random executables from the internet? Build it yourself.
 
