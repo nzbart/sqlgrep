@@ -74,11 +74,19 @@ auto enquote(string_view const val)
     return "\""s + string(val) + "\"";
 }
 
-auto get_number_of_rows(session & sql, string_view const schema, string_view const table, string_view const column, unordered_map<string, uint64_t> & cache)
+auto get_isolation_level_command(session & sql)
+{
+    string isolation_level;
+    sql << "select case (select snapshot_isolation_state_desc from sys.databases where name = db_name()) when 'on' then 'snapshot' else 'read committed' end", into(isolation_level);
+    string const isolation_level_command = "set transaction isolation level "s + isolation_level;
+    return isolation_level_command;
+}
+
+auto get_number_of_rows(session & sql, string_view const isolation_level_command, string_view const schema, string_view const table, string_view const column, unordered_map<string, uint64_t> & cache)
 {
     uint64_t count;
     stringstream query;
-    query << "select count(*) from " << enquote(schema) << "." << enquote(table);
+    query << isolation_level_command << ";select count(*) from " << enquote(schema) << "." << enquote(table);
     auto const query_str = query.str();
 
     auto const cached = cache.find(query_str);
@@ -92,7 +100,7 @@ auto get_number_of_rows(session & sql, string_view const schema, string_view con
     return count;
 }
 
-auto get_all_string_columns(session & sql)
+auto get_all_string_columns(session & sql, string_view const isolation_level_command)
 {
     fmt::print("Scanning for string columns...\n");
 
@@ -113,7 +121,7 @@ auto get_all_string_columns(session & sql)
     unordered_map<string, uint64_t> cache;
     for (auto& column : details)
     {
-        column.number_of_rows = get_number_of_rows(sql, column.schema, column.table, column.column, cache);
+        column.number_of_rows = get_number_of_rows(sql, isolation_level_command, column.schema, column.table, column.column, cache);
         write_verbose("Number of rows in "s + column.schema + "." + column.table + "." + column.column + ": " + to_string(column.number_of_rows) + ".");
     }
 
@@ -128,12 +136,12 @@ auto escape_search_text(string_view to_find)
     return result;
 }
 
-auto find_matches(session & sql, string_view const schema, string_view const table, string_view const column, string_view const to_find, int const maximum_results_per_column)
+auto find_matches(session & sql, string_view const isolation_level_command, string_view const schema, string_view const table, string_view const column, string_view const to_find, int const maximum_results_per_column)
 {
     int const max_string = 500;
     vector<string> matches(maximum_results_per_column + 1);
     stringstream query;
-    query << "select cast(left(" << enquote(column) << ", " << (max_string + 1) << ") as varchar(" << (max_string + 1) << ")) from " << enquote(schema) << "." << enquote(table) << " where " << enquote(column) << " like '%" + escape_search_text(to_find) + "%' escape '\\'", into(matches);
+    query << isolation_level_command << ";select cast(left(" << enquote(column) << ", " << (max_string + 1) << ") as varchar(" << (max_string + 1) << ")) from " << enquote(schema) << "." << enquote(table) << " where " << enquote(column) << " like '%" + escape_search_text(to_find) + "%' escape '\\'", into(matches);
     sql << query.str(), into(matches);
     for (vector<string>::size_type i = 0; i != matches.size(); ++i)
     {
@@ -143,14 +151,14 @@ auto find_matches(session & sql, string_view const schema, string_view const tab
     return matches;
 }
 
-auto display_all_matches(session & sql, vector<column_details> const & all_columns, string_view to_find, int const maximum_results_per_column, uint64_t total_rows)
+auto display_all_matches(session & sql, string_view const isolation_level_command, vector<column_details> const & all_columns, string_view to_find, int const maximum_results_per_column, uint64_t total_rows)
 {
     uint64_t completed_rows = 0;
     auto const start_time = chrono::steady_clock::now();
     auto last_displayed = start_time;
     for (auto column : all_columns)
     {
-        auto matches = find_matches(sql, column.schema, column.table, column.column, to_find, maximum_results_per_column);
+        auto matches = find_matches(sql, isolation_level_command, column.schema, column.table, column.column, to_find, maximum_results_per_column);
         if (!matches.empty())
         {
             auto const more_available = matches.size() > maximum_results_per_column;
@@ -185,11 +193,12 @@ auto find_and_display_matches(string_view to_find, int const maximum_results_per
     parameters.set_option(odbc_option_driver_complete, to_string(SQL_DRIVER_NOPROMPT));
     session sql(parameters);
     sql.set_logger(new database_query_logger);  // `new` is required by SOCI
-    auto all_columns = get_all_string_columns(sql);
+    auto const isolation_level_command = get_isolation_level_command(sql);
+    auto all_columns = get_all_string_columns(sql, isolation_level_command);
     fmt::print("Searching {} columns for '{}'...\n", all_columns.size(), to_find);
     uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0ULL, [](uint64_t acc, column_details const & b) { return acc + b.number_of_rows; });
     write_verbose("Total number of rows to search: "s + to_string(total_rows) + ".");
-    display_all_matches(sql, all_columns, to_find, maximum_results_per_column, total_rows);
+    display_all_matches(sql, isolation_level_command, all_columns, to_find, maximum_results_per_column, total_rows);
 }
 
 auto get_all_odbc_drivers()
