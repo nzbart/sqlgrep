@@ -187,7 +187,7 @@ auto find_and_display_matches(string_view to_find, int const maximum_results_per
     sql.set_logger(new database_query_logger);  // `new` is required by SOCI
     auto all_columns = get_all_string_columns(sql);
     fmt::print("Searching {} columns for '{}'...\n", all_columns.size(), to_find);
-    uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0, [](uint64_t acc, column_details const & b) { return acc + b.number_of_rows; });
+    uint64_t const total_rows = accumulate(begin(all_columns), end(all_columns), 0ULL, [](uint64_t acc, column_details const & b) { return acc + b.number_of_rows; });
     write_verbose("Total number of rows to search: "s + to_string(total_rows) + ".");
     display_all_matches(sql, all_columns, to_find, maximum_results_per_column, total_rows);
 }
