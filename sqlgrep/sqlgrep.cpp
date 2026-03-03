@@ -25,7 +25,7 @@ string const clear_eol = "\033[0K"s;
 
 auto write_colour(string_view const message, fmt::color colour)
 {
-    fmt::print(colour, "{}{}\n", clear_eol, message);
+    fmt::print(fmt::fg(colour), "{}{}\n", clear_eol, message);
 }
 
 auto write_verbose(string_view const message)
@@ -38,7 +38,7 @@ auto write_verbose(string_view const message)
 
 auto write_error(string_view const message)
 {
-    fmt::print(fmt::color::red, "{}\n", message);
+    fmt::print(fmt::fg(fmt::color::red), "{}\n", message);
 }
 
 class database_query_logger : public logger_impl
@@ -291,18 +291,18 @@ int main(int argc, char** argv)
     app.add_option("search-string", search_string, "The text to search for")->mandatory();
     bool verbose = false;
     app.add_flag("-v,--verbose", verbose, "Verbose mode");
-    int maximum_results_per_column = 5;
-    app.add_option("-m,--max-results", maximum_results_per_column, "Maxmium number of matches to return per column", true);
-    string server = "localhost";
-    app.add_option("-s,--server", server, "The SQL server that has the database to search", true);
+    int maximum_results_per_column;
+    app.add_option("-m,--max-results", maximum_results_per_column, "Maxmium number of matches to return per column")->default_val(5);
+    string server;
+    app.add_option("-s,--server", server, "The SQL server that has the database to search")->default_val("localhost");
     optional<string> username;
     auto user_name_option = app.add_option("-u,--user-name", username, "The name of the user to connect as");
     optional<string> password;
     auto password_option = app.add_option("-p,--password", password, "The password of the user to connect as");
     user_name_option->needs(password_option);
     password_option->needs(user_name_option);
-    string driver = get_best_sql_server_odbc_driver_name();
-    app.add_option("-d,--driver", driver, "The ODBC database driver to use", true);
+    string driver;
+    app.add_option("-d,--driver", driver, "The ODBC database driver to use")->default_val(get_best_sql_server_odbc_driver_name());
 
     try
     {
